@@ -1,6 +1,6 @@
-import styles from '@/styles/Home.module.css'
 import { NextPage } from 'next'
 import Head from 'next/head'
+import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
   return (
@@ -15,7 +15,7 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>Welcome to Document Scanner</h1>
 
         <p className={styles.description}>Start scanning your documents</p>
-        <a href='/a'>Go to C Page</a>
+        <a href='/scan_document'>Scan a Document</a>
       </main>
     </div>
   )
