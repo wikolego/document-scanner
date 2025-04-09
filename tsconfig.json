@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    // Określa wersję docelową ECMAScript - ES5 zapewnia szeroką kompatybilność z przeglądarkami
+    "target": "es5",
+    // Wymagane pliki biblioteczne, które mają być uwzględnione w kompilacji
+    "lib": ["dom", "dom.iterable", "esnext"],
+    // Umożliwia kompilację plików JavaScript obok TypeScript
+    "allowJs": true,
+    // Pomija sprawdzanie typów w plikach deklaracji dla lepszej wydajności
+    "skipLibCheck": true,
+    // Włącza wszystkie ścisłe opcje sprawdzania typów dla lepszej jakości kodu
+    "strict": true,
+    // Zapewnia, że nazwy plików są wrażliwe na wielkość liter, nawet w systemach plików niewrażliwych na wielkość liter
+    "forceConsistentCasingInFileNames": true,
+    // Nie emituje skompilowanych plików wyjściowych (Next.js zajmuje się tym)
+    "noEmit": true,
+    // Umożliwia kompatybilność z domyślnymi importami z modułów CommonJS
+    "esModuleInterop": true,
+    // Określa metodę generowania kodu modułu - esnext dla dynamicznych importów
+    "module": "esnext",
+    // Określa sposób rozwiązywania modułów - styl node dla kompatybilności
+    "moduleResolution": "node",
+    // Umożliwia bezpośrednie importowanie plików .json jako modułów
+    "resolveJsonModule": true,
+    // Zapewnia, że każdy plik może być transpilowany oddzielnie bez odwołań do innych plików
+    "isolatedModules": true,
+    // Zachowuje JSX, aby Next.js mógł go przekształcić (zamiast TypeScript)
+    "jsx": "preserve",
+    // Włącza przyrostową kompilację dla szybszych kolejnych kompilacji
+    "incremental": true,
+    // Ustawia katalog bazowy do rozwiązywania nierelatywnych nazw modułów
+    "baseUrl": ".",
+    // Konfiguruje aliasy ścieżek dla czystszych instrukcji importu
+    "paths": {
+      // Symbol @ będzie mapowany do katalogu głównego projektu
+      "@/*": ["./*"]
+    }
+  },
+  // Pliki/wzorce do uwzględnienia w kompilacji
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  // Pliki/wzorce do wykluczenia z kompilacji
+  "exclude": ["node_modules"]
+}
