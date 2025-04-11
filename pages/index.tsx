@@ -15,7 +15,9 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>Welcome to Document Scanner</h1>
 
         <p className={styles.description}>Start scanning your documents</p>
-        <a href='/scan_document'>Scan a Document</a>
+        <a href='/scan_document' className='pageLink'>
+          Scan a Document
+        </a>
       </main>
     </div>
   )

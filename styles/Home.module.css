@@ -28,3 +28,22 @@
   font-size: 1.5rem;
   text-align: center;
 }
+
+.dropZone {
+  width: 100%;
+  max-width: 600px;
+  height: 200px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  background-color: #f8f8f8;
+  transition: all 0.3s ease;
+}
+
+.dropZone.dragging {
+  border-color: #0070f3;
+  background-color: #e6f7ff;
+}
