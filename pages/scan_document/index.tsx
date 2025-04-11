@@ -27,6 +27,12 @@ const Home: NextPage = () => {
     }
   }, [])
 
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0])
+    }
+  }, [])
+
   return (
     <div className={styles.container}>
       <Head>
@@ -47,6 +53,19 @@ const Home: NextPage = () => {
           <p className={styles.description}>
             {file ? `Selected file: ${file.name}` : 'Drag and drop your document here'}
           </p>
+        </div>
+
+        <div className={styles.fileInputContainer}>
+          <label htmlFor='fileInput' className={styles.fileInputLabel}>
+            Or click to select a file
+          </label>
+          <input
+            id='fileInput'
+            type='file'
+            onChange={handleFileSelect}
+            className={styles.fileInput}
+            accept='.pdf,.jpg,.jpeg,.png'
+          />
         </div>
 
         <a href='/' className='pageLink'>
