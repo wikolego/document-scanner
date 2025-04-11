@@ -1,11 +1,13 @@
 import { NextPage } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useCallback, useState } from 'react'
 import styles from '../../styles/Home.module.css'
 
 const Home: NextPage = () => {
   const [file, setFile] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
+  const router = useRouter()
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -33,6 +35,28 @@ const Home: NextPage = () => {
     }
   }, [])
 
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
+      if (!file) return
+
+      try {
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          const base64String = reader.result as string
+          router.push({
+            pathname: '/edit_document',
+            query: { imageUrl: base64String }
+          })
+        }
+        reader.readAsDataURL(file)
+      } catch (error) {
+        console.error('Error processing file:', error)
+      }
+    },
+    [file, router]
+  )
+
   return (
     <div className={styles.container}>
       <Head>
@@ -44,29 +68,37 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <h1 className={styles.title}>Choose the file to scan</h1>
 
-        <div
-          className={`${styles.dropZone} ${isDragging ? styles.dragging : ''}`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <p className={styles.description}>
-            {file ? `Selected file: ${file.name}` : 'Drag and drop your document here'}
-          </p>
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div
+            className={`${styles.dropZone} ${isDragging ? styles.dragging : ''}`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <p className={styles.description}>
+              {file ? `Selected file: ${file.name}` : 'Drag and drop your document here'}
+            </p>
+          </div>
 
-        <div className={styles.fileInputContainer}>
-          <label htmlFor='fileInput' className={styles.fileInputLabel}>
-            Or click to select a file
-          </label>
-          <input
-            id='fileInput'
-            type='file'
-            onChange={handleFileSelect}
-            className={styles.fileInput}
-            accept='.pdf,.jpg,.jpeg,.png'
-          />
-        </div>
+          <div className={styles.fileInputContainer}>
+            <label htmlFor='fileInput' className={styles.fileInputLabel}>
+              Or click to select a file
+            </label>
+            <input
+              id='fileInput'
+              type='file'
+              onChange={handleFileSelect}
+              className={styles.fileInput}
+              accept='.pdf,.jpg,.jpeg,.png'
+            />
+          </div>
+
+          <div className={styles.buttonContainer}>
+            <button type='submit' className={styles.submitButton} disabled={!file}>
+              Process Document
+            </button>
+          </div>
+        </form>
 
         <a href='/' className='pageLink'>
           Go to Home Page
