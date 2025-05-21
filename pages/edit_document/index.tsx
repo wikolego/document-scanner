@@ -7,24 +7,32 @@ import styles from '../../styles/Home.module.css'
 const EditDocument: NextPage = () => {
   const router = useRouter()
   const { imageUrl } = router.query
-  const [message, setMessage] = useState('')
+  const [modifiedImageUrl, setModifiedImageUrl] = useState<string | null>(null)
 
   async function test() {
+    console.log('test1')
+
     const response = await fetch('http://localhost:5000/api/data', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      // body: JSON.stringify({ message: 'Some message' })
       body: JSON.stringify({ imageUrl })
     })
+
+    console.log('test2')
 
     if (!response.ok) {
       throw new Error('Failed to process image')
     }
 
     const data = await response.json()
-    setMessage(data.message)
+    console.log('test3', data)
+
+    // Set the modified image URL
+    if (data.savedImage) {
+      setModifiedImageUrl(`http://localhost:5000/temp/${data.savedImage}`)
+    }
   }
 
   return (
@@ -38,17 +46,19 @@ const EditDocument: NextPage = () => {
       <main className={styles.main}>
         <h1 className={styles.title}>Edit Document</h1>
 
-        {message && <p>{message}</p>}
-
-        {imageUrl && (
-          <div className={styles.imageContainer}>
-            <img
-              src={imageUrl as string}
-              alt='Uploaded document'
-              className={styles.documentImage}
-            />
-          </div>
-        )}
+        <div className={styles.imageContainer}>
+          {modifiedImageUrl ? (
+            <img src={modifiedImageUrl} alt='Modified document' className={styles.documentImage} />
+          ) : (
+            imageUrl && (
+              <img
+                src={imageUrl as string}
+                alt='Original document'
+                className={styles.documentImage}
+              />
+            )
+          )}
+        </div>
 
         <div className={styles.buttonContainer}>
           <button className={styles.button} onClick={test}>

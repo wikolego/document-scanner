@@ -20,6 +20,9 @@ app.use(cors())
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ limit: '50mb', extended: true }))
 
+// Serve static files from temp directory
+app.use('/temp', express.static(tempDir))
+
 // Example route
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from the server!' })
@@ -39,6 +42,9 @@ app.post('/api/data', (req, res) => {
     const filename = `image_${Date.now()}.jpg`
     const filepath = path.join(tempDir, filename)
 
+    const newFilename = 'new_' + filename
+    const newFilepath = path.join(tempDir, newFilename)
+
     fs.writeFile(filepath, buffer, err => {
       if (err) {
         console.error('Error saving image:', err)
@@ -47,7 +53,7 @@ app.post('/api/data', (req, res) => {
       console.log('Image saved successfully:', filename)
 
       // Run Python script
-      const pythonProcess = spawn('python', ['scripts/modify_image.py', filepath])
+      const pythonProcess = spawn('python', ['scripts/modify_image.py', filepath, newFilepath])
 
       pythonProcess.stdout.on('data', data => {
         console.log('Python script output:', data.toString())
@@ -62,7 +68,7 @@ app.post('/api/data', (req, res) => {
         res.json({
           message: 'Data received, image saved, and Python script executed successfully',
           receivedData: data,
-          savedImage: filename
+          savedImage: newFilename
         })
       })
     })
