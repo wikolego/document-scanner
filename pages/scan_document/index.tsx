@@ -42,8 +42,25 @@ const Home: NextPage = () => {
 
       try {
         const reader = new FileReader()
-        reader.onloadend = () => {
+        reader.onloadend = async () => {
           const base64String = reader.result as string
+
+          // Send image to server
+          const response = await fetch('http://localhost:5000/api/upload', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              imageData: base64String
+            })
+          })
+
+          if (!response.ok) {
+            throw new Error('Failed to upload image')
+          }
+
+          // After successful upload, redirect to edit page
           router.push({
             pathname: '/edit_document',
             query: { imageUrl: base64String }
@@ -52,6 +69,7 @@ const Home: NextPage = () => {
         reader.readAsDataURL(file)
       } catch (error) {
         console.error('Error processing file:', error)
+        // You might want to show an error message to the user here
       }
     },
     [file, router]

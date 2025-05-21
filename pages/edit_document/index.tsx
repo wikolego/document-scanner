@@ -9,9 +9,7 @@ const EditDocument: NextPage = () => {
   const { imageUrl } = router.query
   const [modifiedImageUrl, setModifiedImageUrl] = useState<string | null>(null)
 
-  async function test() {
-    console.log('test1')
-
+  async function adjustImage() {
     const response = await fetch('http://localhost:5000/api/data', {
       method: 'POST',
       headers: {
@@ -20,20 +18,19 @@ const EditDocument: NextPage = () => {
       body: JSON.stringify({ imageUrl })
     })
 
-    console.log('test2')
-
     if (!response.ok) {
       throw new Error('Failed to process image')
     }
 
     const data = await response.json()
-    console.log('test3', data)
 
     // Set the modified image URL
     if (data.savedImage) {
       setModifiedImageUrl(`http://localhost:5000/temp/${data.savedImage}`)
     }
   }
+
+  async function saveImage() {}
 
   return (
     <div className={styles.container}>
@@ -61,11 +58,13 @@ const EditDocument: NextPage = () => {
         </div>
 
         <div className={styles.buttonContainer}>
-          <button className={styles.button} onClick={test}>
+          <button className={styles.button} onClick={adjustImage}>
             Adjust
           </button>
           <button className={styles.button}>Crop</button>
-          <button className={styles.button}>Save</button>
+          <button className={styles.button} onClick={saveImage}>
+            Save
+          </button>
         </div>
 
         <div className={styles.linkContainer}>

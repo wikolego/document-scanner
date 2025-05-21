@@ -28,6 +28,57 @@ app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from the server!' })
 })
 
+app.post('/api/upload', (req, res) => {
+  const data = req.body
+
+  // Save the image to temp folder
+  if (data.imageData) {
+    // Remove the data URL prefix (e.g., "data:image/jpeg;base64,")
+    const base64Data = data.imageData.replace(/^data:image\/\w+;base64,/, '')
+    const buffer = Buffer.from(base64Data, 'base64')
+
+    // Generate a unique filename using timestamp
+    const filename = `image_${Date.now()}.jpg`
+    const filepath = path.join(tempDir, filename)
+
+    const newFilename = 'new_' + filename
+    const newFilepath = path.join(tempDir, newFilename)
+
+    fs.writeFile(filepath, buffer, err => {
+      if (err) {
+        console.error('Error saving image:', err)
+        return res.status(500).json({ error: 'Failed to save image' })
+      }
+      console.log('Image saved successfully:', filename)
+
+      // Run Python script
+      const pythonProcess = spawn('python', ['scripts/modify_image.py', filepath, newFilepath])
+
+      pythonProcess.stdout.on('data', data => {
+        console.log('Python script output:', data.toString())
+      })
+
+      pythonProcess.stderr.on('data', data => {
+        console.error('Python script error:', data.toString())
+      })
+
+      pythonProcess.on('close', code => {
+        console.log(`Python script exited with code ${code}`)
+        res.json({
+          message: 'Data received, image saved, and Python script executed successfully',
+          receivedData: data,
+          savedImage: newFilename
+        })
+      })
+    })
+  } else {
+    res.json({
+      message: 'Data received successfully',
+      receivedData: data
+    })
+  }
+})
+
 // Example POST route
 app.post('/api/data', (req, res) => {
   const data = req.body
