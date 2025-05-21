@@ -5,7 +5,7 @@
   "workbench.settings.useSplitJSON": true,
   "workbench.sideBar.location": "right",
   "explorer.openEditors.visible": 1,
-  "workbench.editor.enablePreview": false,
+  "workbench.editor.enablePreview": true,
   "workbench.settings.editor": "json",
   "editor.bracketPairColorization.enabled": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
