@@ -60,10 +60,12 @@ const Home: NextPage = () => {
             throw new Error('Failed to upload image')
           }
 
+          const data = await response.json()
+
           // After successful upload, redirect to edit page
           router.push({
             pathname: '/edit_document',
-            query: { imageUrl: base64String }
+            query: { fileName: data.savedImage }
           })
         }
         reader.readAsDataURL(file)

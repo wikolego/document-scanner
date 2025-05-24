@@ -6,8 +6,12 @@ import styles from '../../styles/Home.module.css'
 
 const EditDocument: NextPage = () => {
   const router = useRouter()
-  const { imageUrl } = router.query
-  const [modifiedImageUrl, setModifiedImageUrl] = useState<string | null>(null)
+  // const { imageUrl, fileName } = router.query
+  const { fileName } = router.query
+  const [modifiedImageName, setModifiedImageName] = useState(fileName)
+  const [modifiedImageUrl, setModifiedImageUrl] = useState<string | undefined>(
+    `http://localhost:5000/temp/${fileName}`
+  )
 
   async function adjustImage() {
     const response = await fetch('http://localhost:5000/api/data', {
@@ -15,7 +19,7 @@ const EditDocument: NextPage = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ imageUrl })
+      body: JSON.stringify({ fileName })
     })
 
     if (!response.ok) {
@@ -26,6 +30,7 @@ const EditDocument: NextPage = () => {
 
     // Set the modified image URL
     if (data.savedImage) {
+      setModifiedImageName(data.savedImage)
       setModifiedImageUrl(`http://localhost:5000/temp/${data.savedImage}`)
     }
   }
@@ -43,18 +48,12 @@ const EditDocument: NextPage = () => {
       <main className={styles.main}>
         <h1 className={styles.title}>Edit Document</h1>
 
+        {/* <p>{imageUrl}</p> */}
+        {/* <p>{modifiedImageName}</p> */}
+        <p>{modifiedImageUrl}</p>
+
         <div className={styles.imageContainer}>
-          {modifiedImageUrl ? (
-            <img src={modifiedImageUrl} alt='Modified document' className={styles.documentImage} />
-          ) : (
-            imageUrl && (
-              <img
-                src={imageUrl as string}
-                alt='Original document'
-                className={styles.documentImage}
-              />
-            )
-          )}
+          <img src={modifiedImageUrl} alt='Modified document' className={styles.documentImage} />
         </div>
 
         <div className={styles.buttonContainer}>

@@ -41,9 +41,6 @@ app.post('/api/upload', (req, res) => {
     const filename = `image_${Date.now()}.jpg`
     const filepath = path.join(tempDir, filename)
 
-    const newFilename = 'new_' + filename
-    const newFilepath = path.join(tempDir, newFilename)
-
     fs.writeFile(filepath, buffer, err => {
       if (err) {
         console.error('Error saving image:', err)
@@ -51,24 +48,9 @@ app.post('/api/upload', (req, res) => {
       }
       console.log('Image saved successfully:', filename)
 
-      // Run Python script
-      const pythonProcess = spawn('python', ['scripts/modify_image.py', filepath, newFilepath])
-
-      pythonProcess.stdout.on('data', data => {
-        console.log('Python script output:', data.toString())
-      })
-
-      pythonProcess.stderr.on('data', data => {
-        console.error('Python script error:', data.toString())
-      })
-
-      pythonProcess.on('close', code => {
-        console.log(`Python script exited with code ${code}`)
-        res.json({
-          message: 'Data received, image saved, and Python script executed successfully',
-          receivedData: data,
-          savedImage: newFilename
-        })
+      res.json({
+        message: 'Data received, image saved, and Python script executed successfully',
+        savedImage: filename
       })
     })
   } else {
@@ -84,43 +66,29 @@ app.post('/api/data', (req, res) => {
   const data = req.body
 
   // Save the image to temp folder
-  if (data.imageUrl) {
-    // Remove the data URL prefix (e.g., "data:image/jpeg;base64,")
-    const base64Data = data.imageUrl.replace(/^data:image\/\w+;base64,/, '')
-    const buffer = Buffer.from(base64Data, 'base64')
+  if (data.fileName) {
+    const filepath = path.join(tempDir, data.fileName)
 
-    // Generate a unique filename using timestamp
-    const filename = `image_${Date.now()}.jpg`
-    const filepath = path.join(tempDir, filename)
-
-    const newFilename = 'new_' + filename
+    const newFilename = 'new_' + data.fileName
     const newFilepath = path.join(tempDir, newFilename)
 
-    fs.writeFile(filepath, buffer, err => {
-      if (err) {
-        console.error('Error saving image:', err)
-        return res.status(500).json({ error: 'Failed to save image' })
-      }
-      console.log('Image saved successfully:', filename)
+    // Run Python script
+    const pythonProcess = spawn('python', ['scripts/modify_image.py', filepath, newFilepath])
 
-      // Run Python script
-      const pythonProcess = spawn('python', ['scripts/modify_image.py', filepath, newFilepath])
+    pythonProcess.stdout.on('data', data => {
+      console.log('Python script output:', data.toString())
+    })
 
-      pythonProcess.stdout.on('data', data => {
-        console.log('Python script output:', data.toString())
-      })
+    pythonProcess.stderr.on('data', data => {
+      console.error('Python script error:', data.toString())
+    })
 
-      pythonProcess.stderr.on('data', data => {
-        console.error('Python script error:', data.toString())
-      })
-
-      pythonProcess.on('close', code => {
-        console.log(`Python script exited with code ${code}`)
-        res.json({
-          message: 'Data received, image saved, and Python script executed successfully',
-          receivedData: data,
-          savedImage: newFilename
-        })
+    pythonProcess.on('close', code => {
+      console.log(`Python script exited with code ${code}`)
+      res.json({
+        message: 'Data received, image saved, and Python script executed successfully',
+        receivedData: data,
+        savedImage: newFilename
       })
     })
   } else {
