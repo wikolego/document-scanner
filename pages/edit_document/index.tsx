@@ -35,7 +35,33 @@ const EditDocument: NextPage = () => {
     }
   }
 
-  async function saveImage() {}
+  async function saveImage() {
+    if (!modifiedImageUrl) return
+
+    try {
+      // Fetch the image
+      const response = await fetch(modifiedImageUrl)
+      const blob = await response.blob()
+
+      // Create a download link
+      const url = window.URL.createObjectURL(blob)
+      console.log(url)
+
+      const link = document.createElement('a')
+      link.href = url
+      link.download = (modifiedImageName as string) || 'document.png'
+
+      // Trigger the download
+      document.body.appendChild(link)
+      link.click()
+
+      // Cleanup
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error saving image:', error)
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -47,10 +73,6 @@ const EditDocument: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>Edit Document</h1>
-
-        {/* <p>{imageUrl}</p> */}
-        {/* <p>{modifiedImageName}</p> */}
-        <p>{modifiedImageUrl}</p>
 
         <div className={styles.imageContainer}>
           <img src={modifiedImageUrl} alt='Modified document' className={styles.documentImage} />
